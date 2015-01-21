@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import matplotlib.pyplot as plt
 import numpy as np
 import csv, argparse, random
@@ -76,30 +78,29 @@ def last_list(genes,chroms):
     		last.append(max(alcor))
     return last
 
-if __name__=="__main__":
+def parse_args():
     parser=argparse.ArgumentParser(description="Creates a manhattan plot from VAAST or Phevor output")
     parser.add_argument("input", help="simple vaast or pVAAST output")
     parser.add_argument("output", help="save file to this handle",type=str)
     parser.add_argument("gff3", help="bed file of genomic coordinates of genes")
     parser.add_argument("--genes",help="comma seperated genes of interest to label in plot",default=None)
     parser.add_argument("--phevor2",help="use this arguemnt if the input is phevor2 rather than VAAST/pVAAST",action='store_true',default=False)
-    args=parser.parse_args()
-    
-    
+    return parser.parse_args()
+
+# genes is a gene name or list of names
+def plot_stuff(input,output,gff3,sig,phevor2):
+    if not isinstance(sig, list):
+      sig = [sig]
     chroms=list(np.arange(1,23))+['X','Y']
     chroms=["chr"+str(i) for i in chroms]
     
-    scores,highS=parse_scores(args.input,args.phevor2)
-    genes=populate_scores_coords(args.gff3,scores)
+    scores,highS=parse_scores(input,phevor2)
+    genes=populate_scores_coords(gff3,scores)
     last=last_list(genes,chroms)
     
     corr=[]
     scor=[]
     t=0
-    if args.genes!=None:
-        sig=args.genes.split(',')
-    else:
-        sig=[]
     sigd={}
     for k in chroms:
     	for j in genes[k].keys():
@@ -120,10 +121,10 @@ if __name__=="__main__":
     ax.set_xticks(centering)
     ax.set_xticklabels(chroms,rotation=45)
     plt.xlabel("Chromosome",fontsize=16)
-    if args.phevor2==True:
+    if phevor2==True:
         ylab="Phevor Score"
         title="Genes Re-Ranked by Phevor"
-    if args.phevor2==False:
+    else:
         ylab="$-log_{10}$ pVAAST p-value"
         title="Genes Scored by pVAAST"
     plt.ylabel(ylab,fontsize=16)
@@ -143,3 +144,11 @@ if __name__=="__main__":
             plt.text(sigd[g][0]+20000000,sigd[g][1],g,fontsize=16)
     plt.savefig(args.output,dpi=300)
     plt.show()
+
+if __name__=="__main__":
+    args = parse_args()
+    genes=[]
+    if args.genes!=None:
+        genes=args.genes.split(',')
+    plot_stuff(args.input,args.output,args.gff3,genes,args.phevor2)
+    
