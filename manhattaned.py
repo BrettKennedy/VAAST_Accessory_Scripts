@@ -93,7 +93,7 @@ def parse_args():
 		height = parser.add_mutually_exclusive_group()
 		height.add_argument("--inch_height", help="in mm",type=float,default=10)
 		height.add_argument("--mm_height", help="in mm",type=float,default=None)
-		parser.add_argument("--point_size", help="size of points", default=300)
+		parser.add_argument("--point_size", help="size of points",type=float, default=300)
 		return parser.parse_args()
 
 # genes is a gene name or list of names
@@ -144,9 +144,10 @@ def plot_stuff(
 	ax.set_xlim([min(corr),max(corr)])
 	ax.set_xticks(centering)
 	ax.set_xticklabels(chroms,rotation=45)
-	xlab_rows=[', '.join(row) for row in annotation]
-	xlab_block='\n'.join(xlab_rows)
-	plt.xlabel(xlab_block,fontsize=12)
+	if annotation:
+		plt.xlabel(annotation,fontsize=12)
+	else:
+		plt.xlabel('Chromosome',fontsize=16)
 	if phevor2==True:
 		ylab="Phevor Score"
 		title="Genes Re-Ranked by Phevor"
@@ -191,9 +192,9 @@ if __name__=="__main__":
 	width = args.inch_width
 	height = args.inch_height
 	if args.mm_width:
-		width = args.mm_width
+		width = args.mm_width / 25.4
 	if args.mm_height:
-		height = args.mm_height
+		height = args.mm_height / 25.4
 	plot_stuff(
 			args.input,
 			args.output,
