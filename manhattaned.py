@@ -79,76 +79,130 @@ def last_list(genes,chroms):
     return last
 
 def parse_args():
-    parser=argparse.ArgumentParser(description="Creates a manhattan plot from VAAST or Phevor output")
-    parser.add_argument("input", help="simple vaast or pVAAST output")
-    parser.add_argument("output", help="save file to this handle",type=str)
-    parser.add_argument("gff3", help="bed file of genomic coordinates of genes")
-    parser.add_argument("--genes",help="comma seperated genes of interest to label in plot",default=None)
-    parser.add_argument("--phevor2",help="use this arguemnt if the input is phevor2 rather than VAAST/pVAAST",action='store_true',default=False)
-    return parser.parse_args()
+		parser=argparse.ArgumentParser(description="Creates a manhattan plot from VAAST or Phevor output")
+		parser.add_argument("input", help="simple vaast or pVAAST output")
+		parser.add_argument("output", help="save file to this handle",type=str)
+		parser.add_argument("gff3", help="bed file of genomic coordinates of genes")
+		parser.add_argument("--red_genes",help="comma seperated genes of interest to label in red",default=None)
+		parser.add_argument("--blue_genes",help="comma seperated genes of interest to label in blue",default=None)
+		parser.add_argument("--phevor2",help="use this arguemnt if the input is phevor2 rather than VAAST/pVAAST",action='store_true',default=False)
+		parser.add_argument("--annotation",help="text to add below the plot",type=str,default=None)
+		width = parser.add_mutually_exclusive_group()
+		width.add_argument("--inch_width", help="in mm",type=float,default=15)
+		width.add_argument("--mm_width", help="in mm",type=float,default=None)
+		height = parser.add_mutually_exclusive_group()
+		height.add_argument("--inch_height", help="in mm",type=float,default=10)
+		height.add_argument("--mm_height", help="in mm",type=float,default=None)
+		parser.add_argument("--point_size", help="size of points", default=300)
+		return parser.parse_args()
 
 # genes is a gene name or list of names
-def plot_stuff(input,output,gff3,sig,phevor2):
-    if not isinstance(sig, list):
-      sig = [sig]
-    chroms=list(np.arange(1,23))+['X','Y']
-    chroms=["chr"+str(i) for i in chroms]
-    
-    scores,highS=parse_scores(input,phevor2)
-    genes=populate_scores_coords(gff3,scores)
-    last=last_list(genes,chroms)
-    
-    corr=[]
-    scor=[]
-    t=0
-    sigd={}
-    for k in chroms:
-    	for j in genes[k].keys():
-    		if j in sig:
-    			sigd[j]=[genes[k][j]['coord']+last[t], genes[k][j]['score']]
-    		corr.append(genes[k][j]['coord']+last[t])
-    		scor.append(genes[k][j]['score'])
-    	t+=1
+def plot_stuff(
+		input,
+		output,
+		gff3,
+		phevor2=False,
+		blue_genes=[],
+		red_genes=[],
+		annotation=None,
+		width=15,
+		height=10,
+		point_size=300
+):
+	if not isinstance(blue_genes, list):
+		blue_genes = [blue_genes]
+	if not isinstance(red_genes, list):
+		red_genes = [red_genes]
+	chroms=list(np.arange(1,23))+['X','Y']
+	chroms=["chr"+str(i) for i in chroms]
+		
+	scores,highS=parse_scores(input,phevor2)
+	genes=populate_scores_coords(gff3,scores)
+	last=last_list(genes,chroms)
 
-    #print sigd
-    centering=[(last[i]+last[i+1])/2 for i in range(len(last)) if i < len(last)-1]
-    colors=['b','g','r','y']
+	corr=[]
+	scor=[]
+	t=0
+	blueD={}
+	redD={}
+	for k in chroms:
+		for j in genes[k].keys():
+			if j in blue_genes:
+				blueD[j]=[genes[k][j]['coord']+last[t], genes[k][j]['score']]
+			if j in red_genes:
+				redD[j]=[genes[k][j]['coord']+last[t], genes[k][j]['score']]
+			corr.append(genes[k][j]['coord']+last[t])
+			scor.append(genes[k][j]['score'])
+		t+=1
 
-    plt.figure(figsize=(15,10))
-    ax=plt.subplot()
-    ax.set_ylim([-0.05,highS+1])
-    ax.set_xlim([min(corr),max(corr)])
-    ax.set_xticks(centering)
-    ax.set_xticklabels(chroms,rotation=45)
-    plt.xlabel("Chromosome",fontsize=16)
-    if phevor2==True:
-        ylab="Phevor Score"
-        title="Genes Re-Ranked by Phevor"
-    else:
-        ylab="$-log_{10}$ pVAAST p-value"
-        title="Genes Scored by pVAAST"
-    plt.ylabel(ylab,fontsize=16)
-    plt.title(title,fontsize=24)
-    t=0
-    for k in chroms:
-    	corr=[]
-    	scor=[]
-    	for j in genes[k].keys():
-    		corr.append(genes[k][j]['coord']+last[t])
-    		scor.append(genes[k][j]['score'])
-    	plt.scatter(corr,scor,c=colors[0],marker='.',s=300,edgecolors='none')
-    	colors=rotate(colors)
-    	t+=1
-    if args.genes!=None:
-        for g in sig:
-            plt.text(sigd[g][0]+20000000,sigd[g][1],g,fontsize=16)
-    plt.savefig(args.output,dpi=300)
-    plt.show()
+	centering=[(last[i]+last[i+1])/2 for i in range(len(last)) if i < len(last)-1]
+	colors=['b','g','r','y']
+
+	plt.figure(figsize=(width,height))
+	ax=plt.subplot()
+	ax.set_ylim([-0.05,highS+1])
+	ax.set_xlim([min(corr),max(corr)])
+	ax.set_xticks(centering)
+	ax.set_xticklabels(chroms,rotation=45)
+	xlab_rows=[', '.join(row) for row in annotation]
+	xlab_block='\n'.join(xlab_rows)
+	plt.xlabel(xlab_block,fontsize=12)
+	if phevor2==True:
+		ylab="Phevor Score"
+		title="Genes Re-Ranked by Phevor"
+	else:
+		ylab="$-log_{10}$ pVAAST p-value"
+		title="Genes Scored by pVAAST"
+	plt.ylabel(ylab,fontsize=16)
+	plt.title(title,fontsize=24)
+	t=0
+	for k in chroms:
+		zero_coor=[]
+		zero_scor=[]
+		corr=[]
+		scor=[]
+		for j in genes[k].keys():
+			if genes[k][j]['score'] > 0:
+				corr.append(genes[k][j]['coord']+last[t])
+				scor.append(genes[k][j]['score'])
+			else:
+				zero_coor.append(genes[k][j]['coord']+last[t])
+				zero_scor.append(genes[k][j]['score'])
+		plt.scatter(zero_coor,zero_scor,c=colors[0],marker='.',s=300,edgecolors='none')
+		plt.scatter(corr,scor,c=colors[0],marker='.',s=point_size,edgecolors='black',)
+		colors=rotate(colors)
+		t+=1
+	for g in blue_genes:
+		plt.text(blueD[g][0]+20000000,blueD[g][1],g,fontsize=16,color='blue')
+	for g in red_genes:
+		plt.text(redD[g][0]+20000000,redD[g][1],g,fontsize=16,color='red')
+	plt.subplots_adjust()
+	plt.savefig(output,dpi=300)
+	#plt.show()
 
 if __name__=="__main__":
-    args = parse_args()
-    genes=[]
-    if args.genes!=None:
-        genes=args.genes.split(',')
-    plot_stuff(args.input,args.output,args.gff3,genes,args.phevor2)
-    
+	args = parse_args()
+	blue_genes=[]
+	if args.blue_genes!=None:
+		blue_genes=args.blue_genes.split(',')
+	red_genes=[]
+	if args.red_genes!=None:
+		red_genes=args.red_genes.split(',')
+	width = args.inch_width
+	height = args.inch_height
+	if args.mm_width:
+		width = args.mm_width
+	if args.mm_height:
+		height = args.mm_height
+	plot_stuff(
+			args.input,
+			args.output,
+			args.gff3,
+			args.phevor2,
+			blue_genes,
+			red_genes,
+			args.annotation,
+			width,
+			height,
+			args.point_size
+	)
