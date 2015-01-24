@@ -35,6 +35,7 @@ def exac_freq(chrom,pos,allele,exac):
     info=line[7].split(';')
     count=float(info[0].split('=')[1].split(',')[ai])
     total=float(info[12].split('=')[1])
+  freq=count/total
   return freq
 
 def genotype_freq(info,exac):
