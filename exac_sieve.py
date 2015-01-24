@@ -41,7 +41,7 @@ def genotype_freq(info,exac):
   """combines the exac frequency of alleles in the info field to 
   calcualte a genotype frequency for the scored allels"""
   freqs=[]
-  for var in range(len(info)):
+  for var in info:
     posvar=var.split(';')[0]
     allele=posvar.split(';')[-3].split('->')[1]
     chrom,pos=posvar.strip('chr').split(':')
