@@ -83,8 +83,8 @@ def main(args):
   exac=tabix.Tabix(args.exac)
   with open(args.pvaast) as t:
     for line in csv.reader(t,delimiter="\t"):
-      line[2]=float(line[2])
       if line[0]=="RANK": continue
+      line[2]=float(line[2])
       if line[2]=="1":
         genes[line[1]]=line[1:]
         continue
