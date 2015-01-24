@@ -43,7 +43,7 @@ def genotype_freq(info,exac):
   freqs=[]
   for var in range(len(info)):
     posvar=var.split(';')[0]
-    allele=var.split(';')[-3].split('->')[1]
+    allele=posvar.split(';')[-3].split('->')[1]
     chrom,pos=posvar.strip('chr').split(':')
     freqs.append(exac_freq(chrom,pos,allele,exac))
   if len(freqs)==1:
