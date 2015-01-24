@@ -2,7 +2,7 @@
 """Filters a pVAAST report by a set frequency cutoff using EXaC data, currently
  only works with SNVs."""
 
-import csv, argparse
+import csv, argparse, operator
 import tabix
 
 __author__="Brett J. Kennedy"
@@ -43,7 +43,8 @@ def genotype_freq(info,exac):
   freqs=[]
   for var in info:
     posvar=var.split(';')[0]
-    allele=posvar.split(';')[-3].split('->')[1]
+    print posvar
+    allele=var.split(';')[-3].split('->')[1]
     chrom,pos=posvar.strip('chr').split(':')
     freqs.append(exac_freq(chrom,pos,allele,exac))
   if len(freqs)==1:
