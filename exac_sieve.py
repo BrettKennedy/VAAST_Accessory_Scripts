@@ -43,7 +43,6 @@ def genotype_freq(info,exac):
   freqs=[]
   for var in info:
     posvar=var.split(';')[0]
-    print posvar
     allele=var.split(';')[-3].split('->')[1]
     chrom,pos=posvar.strip('chr').split(':')
     freqs.append(exac_freq(chrom,pos,allele,exac))
@@ -91,6 +90,7 @@ def main(args):
         continue
       posinfo=line[6:]
       gt_freq=genotype_freq(posinfo,exac)
+      print gt_freq
       if gt_freq<args.cutoff:
         genes[line[1]]=line[1:]
       else: continue
