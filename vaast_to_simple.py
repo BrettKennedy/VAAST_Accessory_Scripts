@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import csv, sys
 import operator
 csv.field_size_limit(sys.maxsize)
