@@ -4,6 +4,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 import csv, argparse, random
 
+__author__="Brett J. Kennedy and Gordon Lemmon"
+__date__="January 24 2015"
+
 def rotate(nist):
     """Spins a list"""
     return nist[1:]+nist[:1]
