@@ -32,10 +32,19 @@ def exac_freq(chrom,pos,allele,exac):
           ai=a
     if int(line[1])!=pos:
       continue
-    info=line[7].split(';')
-    count=float(info[0].split('=')[1].split(',')[ai])
-    total=float(info[12].split('=')[1])
-  freq=count/total
+    info=line[7].split(';')	
+    for field in info:
+      try:
+        idx=field.split('=')[0]	
+        value=field.split('=')[1]
+      except:  continue
+      if idx=='AC_Adj':
+        count=float(value.split(',')[ai])
+      if idx=='AN_Adj':
+        total=float(value)
+    if total==0:
+      return 0
+    freq=count/total
   return freq
 
 def genotype_freq(info,exac):
@@ -46,7 +55,11 @@ def genotype_freq(info,exac):
     posvar=var.split(';')[0]
     allele=var.split(';')[-3].split('->')[1]
     chrom,pos=posvar.strip('chr').split(':')
-    freqs.append(exac_freq(chrom,pos,allele,exac))
+    freq=exac_freq(chrom,int(pos),allele,exac)
+    if freq>0:
+      freqs.append(freq)
+  if freqs==[]:
+    return 0.0
   if len(freqs)==1:
     return freqs[0]**2
   elif len(freqs)==2:
@@ -84,14 +97,13 @@ def main(args):
   exac=tabix.Tabix(args.exac)
   with open(args.pvaast) as t:
     for line in csv.reader(t,delimiter="\t"):
-      if line[0]=="RANK": continue
+      if line[0]=="RANK":  continue
       line[2]=float(line[2])
-      if line[2]=="1":
+      if line[2]==1:
         genes[line[1]]=line[1:]
         continue
       posinfo=line[6:]
       gt_freq=genotype_freq(posinfo,exac)
-      print gt_freq
       if gt_freq<args.cutoff:
         genes[line[1]]=line[1:]
       else: continue
