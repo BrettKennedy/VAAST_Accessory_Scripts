@@ -4,7 +4,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 import csv, argparse, random
 
-#Global configurations
+__author__="Brett J. Kennedy and Gordon Lemmon"
+__date__="January 24 2015"
+
 plt.rcParams['figure.autolayout'] = True
 
 def rotate(nist):
