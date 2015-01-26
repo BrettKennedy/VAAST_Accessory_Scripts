@@ -4,6 +4,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 import csv, argparse, random
 
+#Global configurations
+plt.rcParams['figure.autolayout'] = True
+
 def rotate(nist):
     """Spins a list"""
     return nist[1:]+nist[:1]
