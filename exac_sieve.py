@@ -65,7 +65,7 @@ def genotype_freq(info,exac):
   if len(freqs)==1:
     return freqs[0]**2
   elif len(freqs)>=2:
-    return reduce(lambda x, y: x*y, freqs)
+    return freqs[0]*freqs[1]
 #  elif len(freqs)==3:
 #    return freqs[0]*freqs[1]*freqs[2]
 #  elif len(freqs)>=4:
