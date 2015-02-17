@@ -1,4 +1,4 @@
-#!/user/bin/env python
+#!/usr/bin/env python
 """Filters a pVAAST report by a set frequency cutoff using EXaC data, currently
  only works with SNVs."""
 
