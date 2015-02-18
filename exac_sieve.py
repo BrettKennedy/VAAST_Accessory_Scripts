@@ -60,15 +60,18 @@ def genotype_freq(info,exac):
       freqs.append(freq)
   if freqs==[]:
     return 0.0
+  if chrom=="X":
+    return freqs[0]/2
   if len(freqs)==1:
     return freqs[0]**2
-  elif len(freqs)==2:
+  elif len(freqs)>=2:
     return freqs[0]*freqs[1]
-  elif len(freqs)==3:
-    return freqs[0]*freqs[1]*freqs[2]
-  elif len(freqs)>=4:
-    print "4+ alleles? thats unpossible"
-    return 0
+#  elif len(freqs)==3:
+#    return freqs[0]*freqs[1]*freqs[2]
+#  elif len(freqs)>=4:
+#    print "4+ alleles? thats unpossible"
+#    freq=[]
+#    return freqs[0]*freqs[1]
 
 def write_out(output,ranked_list):
   """writes the to the output"""
