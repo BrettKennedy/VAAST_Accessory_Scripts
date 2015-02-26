@@ -101,6 +101,7 @@ def main(args):
   with open(args.pvaast) as t:
     for line in csv.reader(t,delimiter="\t"):
       if line[0]=="RANK":  continue
+      if "#" in line[0]:  continue
       line[2]=float(line[2])
       if line[2]==1:
         genes[line[1]]=line[1:]
