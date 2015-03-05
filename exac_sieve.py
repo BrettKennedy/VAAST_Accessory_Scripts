@@ -127,13 +127,8 @@ def main(args):
       gt_freq=genotype_freq(posinfo,exac)
       if gt_freq<args.cutoff:
         genes[line[1]]=line[1:]
-      #het=het_test(line)
-      #if het==True:
-      #  modded=line[1]+blanked
-      #  genes[line[1]]=modded
-      #  continue
       else: 
-        modded=line[1]+blanked
+        modded=[line[1]]+blanked
         genes[line[1]]=modded
         continue
   reranked_list=rerank(genes)
