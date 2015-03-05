@@ -69,7 +69,7 @@ def genotype_freq(info,exac):
   if chrom=="X":
     return freqs[0]/2
   if len(freqs)==1:
-    tarcount=info.split(',')[-1]
+    tarcount=info[0].split(',')[-1]
     if tarcount=="1":
       return freqs[0]
     if tarcount=="2":
