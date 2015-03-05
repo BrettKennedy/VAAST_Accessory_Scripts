@@ -66,9 +66,9 @@ def genotype_freq(info,exac):
       freqs.append(freq)
   if freqs==[]:
     return 0.0
-  if chrom=="X":
+  elif chrom=="X":
     return freqs[0]/2
-  if len(freqs)==1:
+  elif len(freqs)==1:
     tarcount=info[0].split(',')[-1]
     if tarcount=="1":
       return freqs[0]
@@ -99,18 +99,36 @@ def rerank(genes):
   lis=sorted(list_to_sort, key=operator.itemgetter(1))
   return lis
 
-def het_test(line):
-  """depreciated"""
-  test=False
-  if len(line)==6:
-    gt=line[6].split(',')[-1]
-    if gt=="1":
-      test=True
-  return test
+def grouper_in_out(grouper,genes,output):
+  out=open(output,'w')
+  ranker=0
+  with open(grouper) as t:
+    out.write(t.readline())
+    out.write(t.readline())
+    out.write(t.readline())
+    for line in csv.reader(t,delimiter="\t"):
+      gene=line[1].strip()
+      pval=genes[gene]
+      if pval<1:
+        o=[str(ranker)]+line[1:]
+        o="\t".join(o)+"\n"
+        out.write(o)
+        ranker+=1
 
-def grouper_in_out(grouper,genes):
-  pass
-  
+def phevor_in_out(phevor,genes,output):
+  out=open(output,'w')
+  ranker=0
+  with open(phevor) as t:
+    out.write(t.readline())
+    for line in csv.reader(t,delimiter="\t"):
+      gene=line[1].strip()
+      pval=genes[gene]
+      if pval<1:
+        o=[str(ranker)]+line[1:]
+        o="\t".join(o)+"\n"
+        out.write(o)
+        ranker+=1
+
 def main(args):
   genes={}
   exac=tabix.Tabix(args.exac)
@@ -135,10 +153,9 @@ def main(args):
   if args.phevor==None and args.grouper==None:
     write_out(args.output,reranked_list)
   elif args.phevor:
-    #filter_phevor(args.output,rerankedlist)
-    print "I can't let you do that Dave"
+    phevor_in_out(args.phevor,genes,args.output)
   elif args.grouper:
-    print "I'm giving it all she's got captain!"
+    grouper_in_out(args.grouper,genes,args.output)
 
 if __name__=="__main__":
   args=parse_args()
