@@ -17,7 +17,7 @@ def parse_args():
   parser.add_argument("output",help="output for filtered and reranked report")
   parser.add_argument("cutoff",help="genotype frequency cutoff",type=float)
   parser.add_argument("exac",help="location tabix indexed EXaC database")
-  parser.add_argument("--Filter_Hets",help="filters simple heterozygous genotypes (not transhets)",dest=hets,action='store_true',default=False)
+  parser.add_argument("--Filter_Hets",help="filters simple heterozygous genotypes (not transhets)",dest="hets",action='store_true',default=False)
   pheno=parser.add_mutually_exclusive_group()
   pheno.add_argument("--phevor",help="optionally, pass a phevor report along\
    with the pVAAST report, output will now be a phevor report",default=None)
