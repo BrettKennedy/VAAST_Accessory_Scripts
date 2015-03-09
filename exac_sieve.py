@@ -108,7 +108,7 @@ def grouper_in_out(grouper,genes,output):
     out.write(t.readline())
     for line in csv.reader(t,delimiter="\t"):
       gene=line[1].strip()
-      pval=genes[gene]
+      pval=genes[gene][1]
       if pval<1:
         o=[str(ranker)]+line[1:]
         o="\t".join(o)+"\n"
@@ -122,7 +122,7 @@ def phevor_in_out(phevor,genes,output):
     out.write(t.readline())
     for line in csv.reader(t,delimiter="\t"):
       gene=line[1].strip()
-      pval=genes[gene]
+      pval=genes[gene][1]
       if pval<1:
         o=[str(ranker)]+line[1:]
         o="\t".join(o)+"\n"
