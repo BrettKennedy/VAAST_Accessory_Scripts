@@ -130,11 +130,10 @@ def phevor_in_out(phevor,genes,output):
         out.write(o)
         ranker+=1
 
-def het_test(line):
-  """depreciated"""
+def het_test(info):
   test=False
-  if len(line)==6:
-    gt=line[6].split(',')[-1]
+  if len(info)==1:
+    gt=info[0].split(',')[-1]
     if gt=="1":
       test=True
   return test
@@ -151,12 +150,12 @@ def main(args):
       if line[2]==1:
         genes[line[1]]=line[1:]
         continue
-      posinfo=line[6:]
+      posinfo=line[5:]
       gt_freq=genotype_freq(posinfo,exac)
       if args.hets==True:
-        het=het_test(line)
+        het=het_test(posinfo)
         if het==True:
-          modded=line[1]+blanked
+          modded=[line[1]]+blanked
           genes[line[1]]=modded
           continue
       if gt_freq<args.cutoff:
