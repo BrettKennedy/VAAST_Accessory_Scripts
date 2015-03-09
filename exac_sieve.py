@@ -150,7 +150,7 @@ def main(args):
       if line[2]==1:
         genes[line[1]]=line[1:]
         continue
-      posinfo=line[5:]
+      posinfo=line[6:]
       gt_freq=genotype_freq(posinfo,exac)
       if args.hets==True:
         het=het_test(posinfo)
