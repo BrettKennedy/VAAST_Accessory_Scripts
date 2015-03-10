@@ -151,9 +151,9 @@ def main(args):
         genes[line[1]]=line[1:]
         continue
       posinfo=line[6:]
-      chrom=posinfo[0].split(':').strip('chr')
+      chrom=posinfo[0].split(':')[0]
       gt_freq=genotype_freq(posinfo,exac)
-      if args.hets==True and chrom!="X":
+      if args.hets==True and chrom!="chrX":
         het=het_test(posinfo)
         if het==True:
           modded=[line[1]]+blanked
