@@ -27,9 +27,10 @@ def parse_args():
 
 def exac_freq(chrom,pos,allele,exac):
   """finds the frequency of an allele in the EXaD database"""
-  freq=0
-  try:  equer=exac.query(chrom,pos-1,pos)
-  except: return freq
+  freq=0.0
+  equer=exac.query(chrom,pos-1,pos)
+  #try:  equer=exac.query(chrom,pos-1,pos)
+  #except: return freq
   for line in equer:
     ai=0
     alleles=line[4].split(',')
@@ -63,8 +64,7 @@ def genotype_freq(info,exac):
     allele=var.split(';')[-3].split('->')[1]
     chrom,pos=posvar.strip('chr').split(':')
     freq=exac_freq(chrom,int(pos),allele,exac)
-    if freq>0:
-      freqs.append(freq)
+    freqs.append(freq)
   if freqs==[]:
     return 0.0
   elif chrom=="X":
