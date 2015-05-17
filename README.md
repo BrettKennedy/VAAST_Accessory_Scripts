@@ -1,4 +1,4 @@
-various_py_scripts
+VAAST_Accessory Scripts
 ==================
 
 A variety of scripts to manipulate VAAST, pVAAST, and pVAAST results. Most are
