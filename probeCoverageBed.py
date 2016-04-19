@@ -5,11 +5,12 @@ import numpy as np
 import pandas as pd
 import operator
 
+
 def get_args():
     parser = argparse.ArgumentParser(description="takes a list of gatk "
                                      "\"sample_interval_summary\" files and "
-                                     "generates a bed file sorted by the mean "
-                                     "depth of coverage across all samples, "
+                                     "generates a bed file sorted by the mean"
+                                     " depth of coverage across all samples, "
                                      "also contains columns for the coverage "
                                      "at that position for each sample")
     parser.add_argument("summaries", nargs='+', help="space seperated list"
@@ -60,9 +61,8 @@ def generateBed(summaries, output):
         generateHeader(summaries, out)
         for region in sorted(meanDict, key=lambda k: meanDict[k]):
             covReg = [str(i) for i in coverageDict[region]]
-            reg = "%s\t%s" % (region.split(':')[0], 
-                                  "\t".join(region.split(':')[1].split('-')))
-            
+            reg = "%s\t%s" % (region.split(':')[0],
+                              "\t".join(region.split(':')[1].split('-')))
             o = "%s\t%1.3f\t%s\n" % (reg, meanDict[region], "\t".join(covReg))
             out.write(o)
 
